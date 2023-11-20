@@ -6,6 +6,8 @@ on:
 
 jobs:
   build:
+    outputs:
+      tag: ${{ steps.meta.outputs.tags }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -19,18 +21,18 @@ jobs:
         tags: |
           type=sha
         github-token: ${{ github.token }}
-          
-    
+
+
     - name: Docker Setup Buildx
       uses: docker/setup-buildx-action@v3.0.0
-      
+
     - name: Docker Login
       uses: docker/login-action@v3.0.0
       with:
         registry: ghcr.io
         username: ${{github.actor}}
         password: ${{github.token}}
-        
+
     - name: Build and push Docker images
       uses: docker/build-push-action@v5.1.0
       with:
@@ -38,6 +40,23 @@ jobs:
         cache-to: type=gha,mode=max
         context: .
         push: true
-        github-token: ${{ github.token }}     
+        github-token: ${{ github.token }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment: home-server
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create identity file
+        env:
+          SSH: ${{ secrets.SSH }}
+        run: echo $SSH > id_github
+      - name: Create compose.file
+        env:
+          TAG: ${{ needs.build.outputs.tag }}
+        run: docker compose -f deployment/base.yaml -f deployment/prod.yaml config | grep -v "name:" > compose.file
+      - name: ssh
+        run: cat compose.file | ssh -i id_github github@jesper.larsson.family "docker stack deploy --compose-file - waypointer"

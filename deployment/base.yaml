@@ -1,14 +1,11 @@
 version: "3.8"
+
 services:
   waypointer:
-    image: ghcr.io/mrlarssonjr/waypointer:latest
     environment:
       - DOMAIN=larsson.family
       - HOST=jesper
-      - INTERVAL=3600
-      - PASSWORD_FILE=/run/secrets/password
+      - PASSWORD_FILE=/run/secrets/waypointer_password
     secrets:
-      - password
-secrets:
-  password:
-    file: ../secrets/password.txt
+      - waypointer_password
+

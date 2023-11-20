@@ -5,3 +5,8 @@ services:
     build:
       context: ..
       target: final
+    environment:
+      - INTERVAL=5
+secrets:
+  waypointer_password:
+    file: ../secrets/password.txt

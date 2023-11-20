@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  waypointer:
+    image: ghcr.io/mrlarssonjr/waypointer/${TAG}
+    environment:
+      - INTERVAL=3600
+
+secrets:
+  waypointer_password:
+    external: true
