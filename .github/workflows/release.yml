@@ -50,6 +50,8 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v3
+      - name: install packages
+        run: apt update && apt install openssh-client -y
       - name: ssh agent
         run: eval $(ssh-agent -s)
       - name: ssh add identity
