@@ -57,7 +57,7 @@ jobs:
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_rsa
           echo "${SSH}" > ~/.ssh/id_rsa
-          ssh-keyscan jesper.larsson.family >> ~/.ssh/known_hosts
+          echo "${HOST_FINGER_PRINT}" >> ~/.ssh/known_hosts
       - name: Create compose.yaml
         env:
           IMAGE: ${{ needs.build.outputs.tag }}
