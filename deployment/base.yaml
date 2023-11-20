@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  waypointer:
+    image: waypointer:latest
+    environment:
+      - DOMAIN=larsson.family
+      - HOST=jesper
+      - INTERVAL=3600
+      - PASSWORD_FILE=/run/secrets/password
+    secrets:
+      - password
+secrets:
+  password:
+    file: ../secrets/password.txt
