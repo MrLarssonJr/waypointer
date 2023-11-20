@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   waypointer:
-    image: waypointer:latest
+    image: ghcr.io/mrlarssonjr/waypointer:latest
     environment:
       - DOMAIN=larsson.family
       - HOST=jesper
