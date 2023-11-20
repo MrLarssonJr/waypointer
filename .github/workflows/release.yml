@@ -57,7 +57,7 @@ jobs:
       - name: Update known_hosts
         env:
           HOST_FINGER_PRINT: $${{ vars.HOST_FINGER_PRINT }}
-        run: echo $HOST_FINGER_PRINT >> ~/.ssh/known_hosts
+        run: echo $HOST_FINGER_PRINT > ~/.ssh/known_hosts
       - name: Create compose.yaml
         env:
           TAG: ${{ needs.build.outputs.tag }}
