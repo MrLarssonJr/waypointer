@@ -38,3 +38,5 @@ jobs:
         context: .
         push: true
         github-token: ${{ github.token }}     
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
