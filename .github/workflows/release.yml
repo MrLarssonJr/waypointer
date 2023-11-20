@@ -50,23 +50,19 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v3
-      - name: Create identity file
+      - name: ssh agent
+        run: eval $(ssh-agent -s)
+      - name: ssh add identity
         env:
           SSH: ${{ secrets.SSH }}
-        run: echo $SSH > id_github
-      - name: Create .ssh
-        run: mkdir ~/.ssh
+        run: echo "${SSH}" | ssh-add - > /dev/null
       - name: Update known_hosts
         env:
           HOST_FINGER_PRINT: $${{ vars.HOST_FINGER_PRINT }}
-        run: echo $HOST_FINGER_PRINT >> ~/.ssh/known_hosts
+        run: mkdir -p ~/.ssh && touch ~/.ssh/known_hosts && echo $HOST_FINGER_PRINT >> ~/.ssh/known_hosts
       - name: Create compose.yaml
         env:
           TAG: ${{ needs.build.outputs.tag }}
         run: docker compose -f deployment/base.yaml -f deployment/prod.yaml config | grep -v "name:" > compose.yaml
       - name: ssh
         run: cat compose.yaml | ssh -i id_github github@jesper.larsson.family "docker stack deploy --compose-file - waypointer"
-      - name: Delete identity file
-        run: rm id_github
-      - name: Delete compose.yaml
-        run: rm compose.yaml
