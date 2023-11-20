@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   waypointer:
-    image: ghcr.io/mrlarssonjr/waypointer/${TAG}
+    image: ${IMAGE}
     environment:
       - INTERVAL=3600
 
