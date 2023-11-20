@@ -50,21 +50,17 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v3
-      - name: install packages
-        run: apt-get update && apt-get install openssh-client -y
-      - name: ssh agent
-        run: eval $(ssh-agent -s)
-      - name: ssh add identity
+      - name: Add identity
         env:
           SSH: ${{ secrets.SSH }}
-        run: echo "${SSH}" | ssh-add - > /dev/null
-      - name: Update known_hosts
-        env:
           HOST_FINGER_PRINT: $${{ vars.HOST_FINGER_PRINT }}
-        run: mkdir -p ~/.ssh && touch ~/.ssh/known_hosts && echo $HOST_FINGER_PRINT >> ~/.ssh/known_hosts
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${SSH}" > ~/.ssh/id_rsa
+          echo $HOST_FINGER_PRINT >> ~/.ssh/known_hosts
       - name: Create compose.yaml
         env:
           TAG: ${{ needs.build.outputs.tag }}
         run: docker compose -f deployment/base.yaml -f deployment/prod.yaml config | grep -v "name:" > compose.yaml
       - name: ssh
-        run: cat compose.yaml | ssh -i id_github github@jesper.larsson.family "docker stack deploy --compose-file - waypointer"
+        run: cat compose.yaml | ssh github@jesper.larsson.family "docker stack deploy --compose-file - waypointer"
