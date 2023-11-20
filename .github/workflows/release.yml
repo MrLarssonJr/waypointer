@@ -15,7 +15,7 @@ jobs:
       uses: docker/metadata-action@v5.0.0
       with:
         images: |
-          waypointer
+          mrlarssonjr/waypointer
         tags: |
           type=sha
         github-token: ${{ github.token }}
